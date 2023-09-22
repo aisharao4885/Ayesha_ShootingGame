@@ -1,0 +1,285 @@
+<html>
+<head>
+<title>Our JS Game</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<style>
+#maindiv{
+	 margin-left:4.75em;
+	 margin-top:1em;
+	 width:800px;
+	 height:500px;
+	 background-image:url("backgroundgame.png");
+	 background-size:contain;
+	 background-repeat:no-repeat;
+
+}
+ .red{
+        position: absolute;
+		left:90px;
+		top:10px;
+		width: 45px;
+		height: 45px;
+		background: url("redbird.png");
+		background-size: contain;
+		background-repeat: no-repeat;
+			
+        }
+.black{
+        position: absolute;
+		left:90px;
+		top:10px;
+		width: 45px;
+		height: 45px;
+		background: url("blackbird.png");
+		background-size: contain;
+		background-repeat: no-repeat;
+			
+        }
+		
+	#jet {
+		position: absolute;
+		width: 40px;
+		height: 40px;
+		background: url("rocket.png");
+		background-size: contain;
+		background-repeat: no-repeat;
+		top: 32%;
+		left:65%;
+		
+	}
+
+	.bullets {
+		position: absolute;
+		top:32%;
+		left:880px;
+		width: 20px;
+		height: 20px;
+		background: url("bullet.png");
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+
+
+</style>
+</head>
+<body>
+<!-- ******************************************BODY*******************************************************-->
+
+
+<div id="maindiv"  style="border:1px solid #d3d3d3;">
+
+
+	
+<button onclick="go()">start</button>
+
+<!--<div class="black"></div>-->
+<div id="jet"></div>
+
+</div>
+<p id="score"></p>
+
+
+<script>
+
+//*********************************************KEYS***************************************
+
+
+var jet = document.getElementById("jet");
+var board = document.getElementById("maindiv");
+
+
+
+window.addEventListener("keydown", (e) => {
+
+	var top = parseInt(window.getComputedStyle(jet).getPropertyValue("top"));
+	if (e.key == "ArrowUp" && top >15) {
+		jet.style.top = top - 10 + "px";
+	}
+	//460  =>  board width - jet width
+	else if (e.key == "ArrowDown" && top <= 380) {
+		jet.style.top = top + 10 + "px";
+	}
+	
+	
+		if (e.keyCode == 32) {
+		//32 is for space key
+	
+	     var bullet = document.createElement("div");
+		bullet.classList.add("bullets");
+		board.appendChild(bullet);
+		
+			var movebullet = setInterval(() => {
+			
+	   
+			
+			/*var rocks = document.getElementsByClassName("black");
+
+			for (var i = 0; i < rocks.length; i++) {
+				var rock = rocks[i];
+				if (rock != undefined) {
+					var rockbound = rock.getBoundingClientRect();
+					var bulletbound = bullet.getBoundingClientRect();
+
+					//Condition to check whether the rock/alien and the bullet are at the same position..!
+					//If so,then we have to destroy that rock
+
+				if (
+						bulletbound.left >= rockbound.left &&
+						bulletbound.right <= rockbound.right &&
+						bulletbound.top >= rockbound.top &&
+						bulletbound.bottom <= rockbound.bottom
+						) {
+						rock.parentElement.removeChild(rock); //Just removing that particular rock;
+						//Scoreboard
+						document.getElementById("points").innerHTML =
+						parseInt(document.getElementById("points").innerHTML) + 1;
+					}
+				}
+			}*/
+			var bulletleft = parseInt(
+				window.getComputedStyle(bullet).getPropertyValue("left")
+				);
+
+
+
+			//Stops the bullet from moving outside the gamebox
+			if (bulletleft <=130) {
+				clearInterval(movebullet);
+			}
+
+			bullet.style.top = top + "px"; //bullet should always be placed at the top of my jet..!
+			bullet.style.left = bulletleft -20 + "px";
+		},1000);
+	    }
+	
+	});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//*******************************************JAVA CODE ****************************************************//
+
+
+
+ /*  
+function go(){
+
+var generatebirdss = setInterval(() => {
+	var birds = document.createElement("div");
+	birds.classList.add("black");
+	//Just getting the left of the rock to place it in random position...
+	var birdtops = parseInt(
+		window.getComputedStyle(birds).getPropertyValue("top")
+		);
+	//generate value between 0 to 450 where 450 => board width - rock width
+	birds.style.top = Math.floor(Math.random() * 350) + "px";
+
+	maindiv.appendChild(birds);
+},1000);
+
+var movebirdss = setInterval(() => {
+	var birdss = document.getElementsByClassName("black");
+
+	if (birdss != undefined) {
+		for (var i = 0; i < birdss.length; i++) {
+			//Now I have to increase the top of each rock,so that the rocks can move downwards..
+			var birds = birdss[i]; //getting each rock
+			var birdlefts = parseInt(
+				window.getComputedStyle(birds).getPropertyValue("left")
+				);
+			//475 => boardheight - rockheight + 25
+			if (birdlefts >= 750) {
+				alert("Game Over");
+				clearInterval(movebirdss);
+				window.location.reload();
+			}
+
+			birds.style.left = birdlefts + 25 + "px";
+		}
+	}
+}, 900);
+
+*/
+
+
+//*************************************************************************RED BIRD *********************************************//
+/*
+var generatebirds = setInterval(() => {
+	var bird = document.createElement("div");
+	bird.classList.add("red");
+	//Just getting the left of the rock to place it in random position...
+	var birdtop = parseInt(
+		window.getComputedStyle(bird).getPropertyValue("top")
+		);
+	//generate value between 0 to 450 where 450 => board width - rock width
+	bird.style.top = Math.floor(Math.random() * 350) + "px";
+
+	maindiv.appendChild(bird);
+},6000);
+
+var movebirds = setInterval(() => {
+	var birds = document.getElementsByClassName("red");
+
+	if (birds != undefined) {
+		for (var i = 0; i < birds.length; i++) {
+			//Now I have to increase the top of each rock,so that the rocks can move downwards..
+			var bird = birds[i]; //getting each rock
+			var birdleft = parseInt(
+				window.getComputedStyle(bird).getPropertyValue("left")
+				);
+			//475 => boardheight - rockheight + 25
+			if (birdleft >= 750) {
+				alert("Game Over");
+				clearInterval(movebirds);
+				window.location.reload();
+			}
+
+			bird.style.left = birdleft + 25 + "px";
+		}
+	}
+}, 900);
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,484 @@
+<html>
+<head>
+	<title>Our JS Game</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+	<style>
+		#screen{
+			width: 1000px;
+			height: 500px;
+			float: left;
+		}
+
+		#maindiv{
+			float: left;
+			display: block;
+			margin-left:4.75em;
+			
+			width:838px;
+			height:500px;
+			background-image:url("backgroundgame.png");
+			background-size:contain;
+			background-repeat:no-repeat;
+
+
+		}
+		.red{
+			position: absolute;
+			left:90px;
+			top:10px;
+			width: 45px;
+			height: 45px;
+			background: url("redbird.png");
+			background-size: contain;
+			background-repeat: no-repeat;
+
+		}
+		.black{
+			position: absolute;
+			left:90px;
+			top: 10px;
+			width: 45px;
+			height: 40px;
+			background: url("blackbird.png");
+			background-size: contain;
+			background-repeat: no-repeat;			
+		}
+		.pinkheart{
+			position: absolute;
+			left:90px;
+			top:10px;
+			width: 30px;
+			height: 30px;
+			background: url("heart.png");
+			background-size: contain;
+			background-repeat: no-repeat;
+
+		}
+		
+		#bow {
+			float: right;
+			position: absolute;
+			width: 40px;
+			height: 40px;
+			background: url("bow.png");
+			background-size: contain;
+			background-repeat: no-repeat;
+			top: 200px;
+			left: 890px;
+			
+		}
+
+		.bullets {
+			position: absolute;
+			top:0px;
+			left:865px;
+			width: 20px;
+			height: 5px;
+			background: url("arr.png");
+			background-size: contain;
+			background-repeat: no-repeat;
+		} 
+		.butt
+		{
+
+			padding-top: 5px;
+			text-align: center;
+			padding-bottom: 5px;
+		}
+		
+
+	</style>
+</head>
+<body>
+	<!-- ******************************************BODY*******************************************************-->
+
+	<div id="screen">
+		<div id="maindiv"  style="border:2px solid white">
+			<!--<div class="black"></div>-->
+			<div id="bow"></div>
+			
+		</div>
+		
+		
+	</div>
+	<div class="container" style="width: 300px; float: left;">
+		<h3 style="padding-top: 10px; text-align: center;">Click Here to Start:</h3>
+		<div class="butt">
+			<button onclick="go()" type="button" class="btn btn-primary" style="padding: 10px 100px; font-size: 20px; border-radius: 10px; border: none; letter-spacing: 3px;">start</button>
+		</div>
+		
+		<h2 style="text-align: center;">Health</h2>
+		<div class="progress">
+			<div class="progress-bar progress-bar-success progress-bar-striped active" id="progress_bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:100%;">
+				<span id="life">Health</span>
+			</div>
+		</div>
+
+
+
+		<div style="font-size: 20px; letter-spacing: 3px; text-align: left;"><b>score:</b></div>
+		<div style="font-size: 17px; padding-bottom: 10px;">
+			<div id="points" ></div>
+		</div>
+		<div class="butt">
+			<button onclick="myFunction()" type="button" class="btn btn-primary" style="padding: 10px 15px; font-size: 20px; border-radius: 10px; border: none;">Click here to see instructions</button>
+			<div id="myDIV" style="display: none; padding-top: 10px;">
+				<ul>
+					<li>For arrow press key ‘A’</li>
+					<li>For up and down movement of Bow Press</li>
+					<li>Killing <b>black</b> eyed birds will increase scores by 1</li>
+					<li>Killing <b style="color: red;">Red</b> Eyed bird will decrease the score by 1 and health by 10%</li>
+					<li>Hitting the heart will increase the health by 10%</li>
+					<li>Game will be over if <b>black</b> eyed bird hit at the end of the screen</li>
+				</ul>
+			</div>
+			<div style="margin-top: 40px; margin-left: 10px; ">
+				<button type="button" class="btn btn-primary" style="margin-left: 20px;" id="pause">Pause</button>
+				<button type="button" class="btn btn-success" style="margin-left: 50px;" id="new">Start Again</button></div>
+			</div>
+		</div>
+
+
+		<script>
+
+//*********************************************KEYS***************************************
+$("#pause").click(function(){
+	alert("Game Paused.");
+});
+
+$("#new").click(function(){
+	clearInterval(movebirdss);
+	window.location.reload();
+});
+
+var bow = document.getElementById("bow");
+var board = document.getElementById("maindiv");
+var score=0;
+var health=100;
+
+function myFunction() {
+	var x = document.getElementById("myDIV");
+	if (x.style.display === "block") {
+		x.style.display = "none";
+	} else {
+		x.style.display = "block";
+	}
+}
+
+function go()
+{
+	var healths = setInterval(() => {
+		if (health>=1){
+			health-=0;
+			
+			$('#progress_bar').css('width', health + "%");
+			$('#life').innerHTML="health";
+		}
+	}, 400);
+
+	
+	
+
+
+	window.addEventListener("keydown", (e) => {
+
+		var top = parseInt(window.getComputedStyle(bow).getPropertyValue("top"));
+		if (e.key == "ArrowUp" && top >15) {
+			bow.style.top = top - 10 + "px";
+		}
+	//460  =>  board width - bow width
+	else if (e.key == "ArrowDown" && top <= 380) {
+		bow.style.top = top + 10 + "px";
+	}
+	
+	
+	if (e.keyCode == 65) {
+		//65 is for a key
+		
+		var bullet = document.createElement("div");
+		bullet.classList.add("bullets");
+		board.appendChild(bullet);
+		
+		var movebullet = setInterval(() => {
+			
+			
+			
+			var rocks = document.getElementsByClassName("black");
+			var rocks2 = document.getElementsByClassName("red");
+			var rocks3 = document.getElementsByClassName("pinkheart");
+			for (var i = 0; i < rocks.length; i++) {
+				var rock = rocks[i];
+				if (rock != undefined) {
+					var rockbound = rock.getBoundingClientRect();
+					var bulletbound = bullet.getBoundingClientRect();
+					
+					//Condition to check whether the rock/alien and the bullet are at the same position..!
+					//If so,then we have to destroy that rock
+
+					if (
+						bulletbound.left >= rockbound.left &&
+						bulletbound.right <= rockbound.right &&
+						bulletbound.top >= rockbound.top &&
+						bulletbound.bottom <= rockbound.bottom
+						) {
+						
+						
+						
+						rock.parentElement.removeChild(rock);
+						//Just removing that particular rock;
+						//Scoreboard
+					/*	if (health<85){
+							health+=15;
+						}*/
+						score++;
+						document.getElementById("points").innerHTML = score;
+					}
+				}
+			}
+
+
+
+
+			for (var i = 0; i < rocks2.length; i++) {
+				var rock2 = rocks2[i];
+				if (rock2 != undefined) {
+					var rockbound2 = rock2.getBoundingClientRect();
+					var bulletbound = bullet.getBoundingClientRect();
+					
+					//Condition to check whether the rock/alien and the bullet are at the same position..!
+					//If so,then we have to destroy that rock
+
+					if (
+						bulletbound.left >= rockbound2.left &&
+						bulletbound.right <= rockbound2.right &&
+						bulletbound.top >= rockbound2.top &&
+						bulletbound.bottom <= rockbound2.bottom
+						) {
+						
+						
+						
+						rock2.parentElement.removeChild(rock2);
+						//Just removing that particular rock;
+						//Scoreboard
+						if (health){
+							health-=10;
+						}
+						score--;
+						document.getElementById("points").innerHTML = score;
+					}
+				}
+			}
+			for (var i = 0; i < rocks3.length; i++) {
+				var rock3 = rocks3[i];
+				if (rock3 != undefined) {
+					var rockbound3 = rock3.getBoundingClientRect();
+					var bulletbound = bullet.getBoundingClientRect();
+					
+					//Condition to check whether the rock/alien and the bullet are at the same position..!
+					//If so,then we have to destroy that rock
+
+					if (
+						bulletbound.left >= rockbound3.left &&
+						bulletbound.right <= rockbound3.right &&
+						bulletbound.top >= rockbound3.top &&
+						bulletbound.bottom <= rockbound3.bottom
+						) {
+						
+						
+						
+						rock3.parentElement.removeChild(rock3);
+						//Just removing that particular rock;
+						//Scoreboard
+						if (health<100){
+							health+=15;
+						}
+					}
+				}
+			}
+
+
+
+			var bulletleft = parseInt(
+				window.getComputedStyle(bullet).getPropertyValue("left")
+				);
+
+			//Stops the bullet from moving outside the gamebox
+			if (bulletleft <= 50) {
+				clearInterval(movebullet);
+			}
+
+			bullet.style.top = top + 20 + "px"; //bullet should always be placed at the top of my bow..!
+			bullet.style.left = bulletleft -30 + "px";
+		},100);  
+	}  
+	
+});
+
+	var generatebirdss = setInterval(() => {
+		var birds = document.createElement("div");
+		birds.classList.add("black");   
+	//Just getting the left of the rock to place it in random position...
+	var birdtops = parseInt(
+		window.getComputedStyle(birds).getPropertyValue("top")
+		);
+	//generate value between 0 to 450 where 450 => board width - rock width
+	birds.style.top = Math.ceil(Math.random() * 350) + "px";
+
+	maindiv.appendChild(birds);
+},2200);
+
+}     
+
+var movebirdss = setInterval(() => {
+	var birdss = document.getElementsByClassName("black");
+
+	if (birdss != undefined) {
+		for (var i = 0; i < birdss.length; i++) {
+				//Now I have to increase the top of each rock,so that the rocks can move downwards..
+				var birds = birdss[i]; //getting each rock
+				var birdlefts = parseInt(
+					window.getComputedStyle(birds).getPropertyValue("left")
+					);
+				//475 => boardheight - rockheight + 25
+				if (birdlefts >= 850 || health ==0 ) {
+					alert("Game Over");
+					clearInterval(movebirdss);
+					window.location.reload();
+				}
+
+				birds.style.left = birdlefts + 25 + "px";
+			}
+		} 
+	}, 1000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//*************************************************************************RED BIRD *********************************************//
+
+var generatebirds = setInterval(() => {
+	var bird = document.createElement("div");
+	bird.classList.add("red");
+	//Just getting the left of the rock to place it in random position...
+	var birdtop = parseInt(
+		window.getComputedStyle(bird).getPropertyValue("top")
+		);
+	//generate value between 0 to 450 where 450 => board width - rock width
+	bird.style.top = Math.ceil(Math.random() * 350) + "px";
+
+	maindiv.appendChild(bird);
+},9000);
+
+var movebirds = setInterval(() => {
+	var birds = document.getElementsByClassName("red");
+
+	if (birds != undefined) {
+		for (var i = 0; i < birds.length; i++) {
+			//Now I have to increase the top of each rock,so that the rocks can move downwards..
+			var bird = birds[i]; //getting each rock
+			var birdleft = parseInt(
+				window.getComputedStyle(bird).getPropertyValue("left")
+				);
+			//475 => boardheight - rockheight + 25
+			if (birdleft >= 850) {
+				
+				bird.parentElement.removeChild(bird);
+			}
+
+			bird.style.left = birdleft + 25 + "px";
+		}
+	}
+}, 1000);
+
+
+
+
+
+
+
+
+
+
+
+//******************************hearts********************************************//
+
+
+
+var generateheart = setInterval(() => {
+	var hearts = document.createElement("div");
+	hearts.classList.add("pinkheart");   
+	//Just getting the left of the rock to place it in random position...
+	var hearttops = parseInt(
+		window.getComputedStyle(hearts).getPropertyValue("top")
+		);
+	//generate value between 0 to 450 where 450 => board width - rock width
+	hearts.style.top =2+ Math.ceil(Math.random() * 350) + "px";
+
+	maindiv.appendChild(hearts);
+},20000);
+
+
+
+var movehearts = setInterval(() => {
+	var hearts = document.getElementsByClassName("pinkheart");
+
+	if (hearts != undefined) {
+		for (var i = 0; i < hearts.length; i++) {
+				//Now I have to increase the top of each rock,so that the rocks can move downwards..
+				var hearts = hearts[i]; //getting each rock
+				var heartlefts = parseInt(
+					window.getComputedStyle(hearts).getPropertyValue("left")
+					);
+				//475 => boardheight - rockheight + 25
+				if (heartlefts >= 830 ) {
+					
+					hearts.parentElement.removeChild(hearts);
+				}
+
+				hearts.style.left = heartlefts + 25 + "px";
+			}
+		} 
+	}, 1000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
